@@ -2,6 +2,7 @@ function indices = findStrPos( str , pattern , opts )
 % str       the space that is seached
 % pattern   the search keyword or pattern
 % opts      options: 0 - normal search ||| 'regex' - regex search
+% Philipp Schneider 2018
 if nargin == 2
     opts = 0;
 end
