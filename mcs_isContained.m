@@ -5,6 +5,7 @@ function [info, redund1, redund2, compareMat] = mcs_isContained(mcs1,mcs2,dispva
 % 1: a subset of this exists in mcs2
 % 2: a superset of this exists in mcs2
 % 3: yes
+% Philipp Schneider 2018
 if nargin < 3
     dispval = 0;
 end
