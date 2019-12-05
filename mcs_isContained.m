@@ -1,5 +1,5 @@
 function [info, redund1, redund2, compareMat] = mcs_isContained(mcs1,mcs2,dispval)
-% is mcs2 contained in mcs1? (each column is one mcs)
+% is mcs2 contained in mcs1? (each column corresponds to one mcs)
 % information are given on mcs2.
 % 0: no
 % 1: a subset of this exists in mcs2
