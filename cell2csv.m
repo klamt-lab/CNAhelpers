@@ -15,6 +15,7 @@ function cell2csv(fileName, cellArray, separator, excelYear, decimal)
 %
 %         by Sylvain Fiedler, KA, 2004
 % updated by Sylvain Fiedler, Metz, 06
+% updated by Philipp Schneider, 2019
 % fixed the logical-bug, Kaiserslautern, 06/2008, S.Fiedler
 % added the choice of decimal separator, 11/2010, S.Fiedler
 % modfiedy and optimized by Jerry Zhu, June, 2014, jerryzhujian9@gmail.com
