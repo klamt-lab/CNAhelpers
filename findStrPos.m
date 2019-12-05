@@ -1,5 +1,5 @@
 function indices = findStrPos( str , pattern , opts )
-% str       the space that is seached
+% str       the space that is seached (char array, cell array, string array)
 % pattern   the search keyword or pattern
 % opts      options: 0 - normal search ||| 'regex' - regex search
 % Philipp Schneider 2018
