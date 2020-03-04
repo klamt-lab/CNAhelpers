@@ -1,27 +1,26 @@
-function [info, redund1, redund2, compareMat] = mcs_isContained(mcs1,mcs2,dispval)
-% is mcs2 contained in mcs1? (each column corresponds to one mcs)
+function [info, redund1, redund2, compareMat] = compare_mcs_sets(mcs1,mcs2,dispval)
+% is mcs2 somehow contained in mcs1? (each column is one mcs)
 % information are given on mcs2.
 % 0: no
-% 1: a subset of this exists in mcs2
-% 2: a superset of this exists in mcs2
+% 1: a subset of this exists in mcs1
+% 2: a superset of this exists in mcs1
 % 3: yes
-% Philipp Schneider 2018
 if nargin < 3
     dispval = 0;
 end
 if size(mcs1,1) ~= size(mcs2,1)
     error('The compared sets don''t have the same number of reactions');
 end
+mcs1 = mcs1 ~= 0 & ~isnan(mcs1);
+mcs2 = mcs2 ~= 0 & ~isnan(mcs2);
+relevant_cols = sum([mcs1 mcs2],2)~=0;
+mcs1 = sparse(mcs1(relevant_cols,:));
+mcs2 = sparse(mcs2(relevant_cols,:));
+
+% check internally (1)
 redund1 = zeros(size(mcs1,2));
-% check internally
 for i = 1:size(mcs1,2)
-    c = nan(1,size(mcs1,2)-i);
-    for j = i+1:size(mcs1,2)
-        c(j-i) = ispartof(mcs1(:,j),mcs1(:,i)) + 2*ispartof(mcs1(:,i),mcs1(:,j));
-    end
-    if any(c)
-        redund1(i,(i+1):size(mcs1,2)) = c;
-    end
+    redund1(i,(i+1):end) = relation(mcs1(:,i),mcs1(:,(i+1):end));
 end
 if any(any(redund1))
     if dispval, warning('mcs set 1 has redundancies');
@@ -30,15 +29,11 @@ if any(any(redund1))
     a(a==1 | a==2) = 3-a(a==1 | a==2);
     redund1 = a+redund1;
 end
+
+% check internally (2)
 redund2 = zeros(size(mcs2,2));
 for i = 1:size(mcs2,2)
-    c = nan(1,size(mcs2,2)-i);
-    for j = i+1:size(mcs2,2)
-        c(j-i) = ispartof(mcs2(:,j),mcs2(:,i)) + 2*ispartof(mcs2(:,i),mcs2(:,j));
-    end
-    if any(c)
-        redund2(i,(i+1):size(mcs2,2)) = c;
-    end
+    redund2(i,(i+1):end) = relation(mcs2(:,i),mcs2(:,(i+1):end));
 end
 if any(any(redund2))
     if dispval, warning('mcs set 2 has redundancies');
@@ -51,9 +46,7 @@ end
 % compare
 compareMat = nan(size(mcs1,2),size(mcs2,2));
 for i = 1:size(mcs2,2)
-    for j = 1:size(mcs1,2)
-        compareMat(j,i) = ispartof(mcs1(:,j),mcs2(:,i)) + 2*ispartof(mcs2(:,i),mcs1(:,j));
-    end
+    compareMat(:,i) = relation(mcs2(:,i),mcs1);
 end
 info = max(compareMat,[],1);
 num_related_mcs = sum(~~compareMat,1);
@@ -78,10 +71,13 @@ if dispval
         end
     end
 end
-
-function p = ispartof(s1,s2)
-    s1_nonzero = ~isnan(s1) & s1 ~=0;
-    s2(isnan(s2)) = 0;
-    p = all(s1(s1_nonzero) == s2(s1_nonzero));
 end
+
+function s = relation(mcs_ref,mcs_compare)
+    contnset = all(mcs_compare( mcs_ref,:),1); % contained in the set
+    diffset  = any(mcs_compare(~mcs_ref,:),1); %�have nonzero values outside the set
+    s = zeros(size(mcs_compare,2),1);
+    s(~contnset & ~diffset) = 1; % subset
+    s( contnset &  diffset) = 2; % superset
+    s( contnset & ~diffset) = 3; % identical set
 end
