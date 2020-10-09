@@ -51,7 +51,7 @@ end
 if ~isempty(compareMat)
     info = max(compareMat,[],1);
 else
-    info = 3*ones(1,size(compareMat,2));
+    info = zeros(1,size(compareMat,2));
 end
 num_related_mcs = sum(~~compareMat,1);
 if any(num_related_mcs>1)
