@@ -17,7 +17,7 @@ relevant_cols = sum([mcs1 mcs2],2)~=0;
 mcs1 = sparse(mcs1(relevant_cols,:));
 mcs2 = sparse(mcs2(relevant_cols,:));
 
-% check internally (1)
+% check MCS redundance (1)
 redund1 = zeros(size(mcs1,2));
 for i = 1:size(mcs1,2)
     redund1(i,(i+1):end) = relation(mcs1(:,i),mcs1(:,(i+1):end));
@@ -30,7 +30,7 @@ if any(any(redund1))
     redund1 = a+redund1;
 end
 
-% check internally (2)
+% check redundance (2)
 redund2 = zeros(size(mcs2,2));
 for i = 1:size(mcs2,2)
     redund2(i,(i+1):end) = relation(mcs2(:,i),mcs2(:,(i+1):end));
@@ -48,7 +48,11 @@ compareMat = nan(size(mcs1,2),size(mcs2,2));
 for i = 1:size(mcs2,2)
     compareMat(:,i) = relation(mcs2(:,i),mcs1);
 end
-info = max(compareMat,[],1);
+if ~isempty(compareMat)
+    info = max(compareMat,[],1);
+else
+    info = 3*ones(1,size(compareMat,2));
+end
 num_related_mcs = sum(~~compareMat,1);
 if any(num_related_mcs>1)
     if dispval, warning([num2str(sum(num_related_mcs>1)) ...
