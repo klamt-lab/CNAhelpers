@@ -32,17 +32,26 @@ function [mass_imbalanced_reacs, charge_imbalanced_reacs] = check_mass_balance(c
     disp('checking for reactions with mass imbalance...');
     mass_balances = cnap.stoichMat'*species_element_matrix;
     mass_imbalanced_reacs = find(any(abs(mass_balances)>1e-4,2) & ~exchange_reacs');
-    mass_imbalance_table =  [{''}, elements;cellstr(cnap.reacID(mass_imbalanced_reacs,:)) num2cell(mass_balances(mass_imbalanced_reacs,:))];
-    disp(['model has ' num2str(sum(any(abs(mass_balances)>1e-4,2) & exchange_reacs')) ' mass-imbalanced exchange reactions.'])
-    disp(['model has ' num2str(numel(mass_imbalanced_reacs)) ' mass-imbalanced metabolic reactions:']);
-    disp(cellstr(cnap.reacID(mass_imbalanced_reacs,:)));
+    if size(mass_imbalanced_reacs,1) > 0
+        mass_imbalance_table =  [{''}, elements;cellstr(cnap.reacID(mass_imbalanced_reacs,:)) num2cell(mass_balances(mass_imbalanced_reacs,:))];
+        disp(['model has ' num2str(sum(any(abs(mass_balances)>1e-4,2) & exchange_reacs')) ' mass-imbalanced exchange reactions.'])
+        disp(['model has ' num2str(numel(mass_imbalanced_reacs)) ' mass-imbalanced metabolic reactions:']);
+        disp(cellstr(cnap.reacID(mass_imbalanced_reacs,:)));
+    else
+        disp('model has no mass-imbalanced reactions');
+    end
+
     
     disp('checking for reactions with charge imbalance...');
     charge_balances = cnap.stoichMat'*charge';
     charge_imbalanced_reacs = find(any(abs(charge_balances)>1e-4,2) & ~exchange_reacs');
-    charge_imbalance_table =  [{''}, {'charge'};cellstr(cnap.reacID(charge_imbalanced_reacs,:)) num2cell(charge_balances(charge_imbalanced_reacs,:))];
-    disp(['model has ' num2str(sum(any(abs(charge_balances)>1e-4,2) & exchange_reacs')) ' charge-imbalanced exchange reactions.'])
-    disp(['model has ' num2str(numel(charge_imbalanced_reacs)) ' charge-imbalanced metabolic reactions:']);
-    disp(cellstr(cnap.reacID(charge_imbalanced_reacs,:)));
+    if size(charge_imbalanced_reacs,1) > 0
+        charge_imbalance_table =  [{''}, {'charge'};cellstr(cnap.reacID(charge_imbalanced_reacs,:)) num2cell(charge_balances(charge_imbalanced_reacs,:))];
+        disp(['model has ' num2str(sum(any(abs(charge_balances)>1e-4,2) & exchange_reacs')) ' charge-imbalanced exchange reactions.'])
+        disp(['model has ' num2str(numel(charge_imbalanced_reacs)) ' charge-imbalanced metabolic reactions:']);
+        disp(cellstr(cnap.reacID(charge_imbalanced_reacs,:)));
+    else
+        disp('model has no charge-imbalanced reactions');
+    end
 end
 
